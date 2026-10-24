@@ -116,6 +116,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named calc_shared
+
+# Build rule for target.
+calc_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 calc_shared
+.PHONY : calc_shared
+
+# fast build rule for target.
+calc_shared/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\calc_shared.dir\build.make CMakeFiles/calc_shared.dir/build
+.PHONY : calc_shared/fast
+
+#=============================================================================
 # Target rules for targets named main
 
 # Build rule for target.
@@ -152,6 +165,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\main.dir\build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+module/calc.obj: module/calc.c.obj
+.PHONY : module/calc.obj
+
+# target to build an object file
+module/calc.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\calc_shared.dir\build.make CMakeFiles/calc_shared.dir/module/calc.c.obj
+.PHONY : module/calc.c.obj
+
+module/calc.i: module/calc.c.i
+.PHONY : module/calc.i
+
+# target to preprocess a source file
+module/calc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\calc_shared.dir\build.make CMakeFiles/calc_shared.dir/module/calc.c.i
+.PHONY : module/calc.c.i
+
+module/calc.s: module/calc.c.s
+.PHONY : module/calc.s
+
+# target to generate assembly for a file
+module/calc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\calc_shared.dir\build.make CMakeFiles/calc_shared.dir/module/calc.c.s
+.PHONY : module/calc.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -160,10 +197,14 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... calc_shared
 	@echo ... main
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... module/calc.obj
+	@echo ... module/calc.i
+	@echo ... module/calc.s
 .PHONY : help
 
 

@@ -1,8 +1,0 @@
-[
-{
-  "directory": "D:/Data/Vscode/Demo_Project/build",
-  "command": "D:\\App\\mingw64\\bin\\g++.exe   -g -g -o CMakeFiles\\main.dir\\main.cpp.obj -c D:\\Data\\Vscode\\Demo_Project\\main.cpp",
-  "file": "D:/Data/Vscode/Demo_Project/main.cpp",
-  "output": "CMakeFiles/main.dir/main.cpp.obj"
-}
-]

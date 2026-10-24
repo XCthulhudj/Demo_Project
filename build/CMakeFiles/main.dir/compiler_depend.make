@@ -163,8 +163,11 @@ CMakeFiles/main.dir/main.cpp.obj: D:/Data/Vscode/Demo_Project/main.cpp \
   D:/App/mingw64/x86_64-w64-mingw32/include/time.h \
   D:/App/mingw64/x86_64-w64-mingw32/include/vadefs.h \
   D:/App/mingw64/x86_64-w64-mingw32/include/wchar.h \
-  D:/App/mingw64/x86_64-w64-mingw32/include/wctype.h
+  D:/App/mingw64/x86_64-w64-mingw32/include/wctype.h \
+  D:/Data/Vscode/Demo_Project/module/calc.h
 
+
+D:/Data/Vscode/Demo_Project/module/calc.h:
 
 D:/App/mingw64/x86_64-w64-mingw32/include/wctype.h:
 
