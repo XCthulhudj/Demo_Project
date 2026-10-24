@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-# project(demo_project)
 project(demo_project LANGUAGES C CXX)
 
 add_compile_options(-g)

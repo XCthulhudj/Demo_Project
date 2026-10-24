@@ -1,0 +1,14 @@
+[
+{
+  "directory": "D:/Data/Vscode/Demo_Project/build",
+  "command": "D:\\App\\mingw64\\bin\\gcc.exe -Dcalc_shared_EXPORTS @CMakeFiles\\calc_shared.dir\\includes_C.rsp -g -g -o CMakeFiles\\calc_shared.dir\\module\\calc.c.obj -c D:\\Data\\Vscode\\Demo_Project\\module\\calc.c",
+  "file": "D:/Data/Vscode/Demo_Project/module/calc.c",
+  "output": "CMakeFiles/calc_shared.dir/module/calc.c.obj"
+},
+{
+  "directory": "D:/Data/Vscode/Demo_Project/build",
+  "command": "D:\\App\\mingw64\\bin\\g++.exe  @CMakeFiles\\main.dir\\includes_CXX.rsp -g -g -o CMakeFiles\\main.dir\\main.cpp.obj -c D:\\Data\\Vscode\\Demo_Project\\main.cpp",
+  "file": "D:/Data/Vscode/Demo_Project/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.obj"
+}
+]
