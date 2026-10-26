@@ -24,3 +24,4 @@ set_target_properties(calc_shared PROPERTIES
 
 add_executable(main main.cpp)
 target_link_libraries(main calc_shared)
+ 
