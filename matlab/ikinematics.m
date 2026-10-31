@@ -70,4 +70,4 @@ figure;
 six_link.plot(q_sol);
 title('Six Axis Robot - Inverse Kinematics');
 
-%数值迭代求逆解
+%%数值迭代求逆解Levenberg-Marquardt(LM)
