@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Python 面向对象 · 继承与封装</title>
+<style>
+  @page { size: A4; margin: 15mm 14mm 15mm 14mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 10.3pt; line-height: 1.78; color: #1f2937; margin: 0; background: #fff;
+  }
+  .wrap { width: 182mm; margin: 0 auto; }
+
+  /* ---------- 页眉 ---------- */
+  .kicker { font-size: 9pt; letter-spacing: .18em; color: #2563eb; font-weight: 700; }
+  h1 { font-size: 22pt; line-height: 1.3; margin: 4px 0 6px; color: #0f172a; letter-spacing: .01em; }
+  .sub { font-size: 10.5pt; color: #64748b; margin: 0 0 14px; }
+  .rule { height: 3px; background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 45%, #e2e8f0 45%, #e2e8f0 100%); margin-bottom: 18px; }
+
+  /* ---------- 标题 ---------- */
+  h2 { font-size: 14.5pt; color: #0f172a; margin: 22px 0 10px; padding-left: 10px;
+       border-left: 4px solid #2563eb; break-after: avoid; }
+  h3 { font-size: 11.4pt; color: #0f172a; margin: 16px 0 6px; break-after: avoid; }
+  h3::before { content: "▸ "; color: #2563eb; }
+
+  p { margin: 6px 0; }
+  .lead { color: #334155; }
+
+  /* ---------- 代码 ---------- */
+  pre { margin: 10px 0 12px; padding: 12px 16px; border-radius: 8px;
+        background: #0f172a; overflow: hidden; break-inside: avoid;
+        font-size: 9.1pt; line-height: 1.55; }
+  pre code { font-family: Consolas, "Cascadia Mono", "Courier New", monospace; color: #e6edf3; }
+  .k { color: #c792ea; }   /* 关键字 */
+  .s { color: #a5e075; }   /* 字符串 */
+  .c { color: #7c8b9e; }   /* 注释 */
+  pre.out { background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; font-size: 9.1pt; }
+  pre.out code { color: #334155; }
+  .cap { font-size: 8.8pt; color: #94a3b8; margin: -6px 0 12px; }
+
+  /* ---------- 表格 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 9.6pt; break-inside: avoid; }
+  th, td { border: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #eff6ff; color: #1e3a8a; font-weight: 700; }
+  td code, p code, li code { font-family: Consolas, monospace; font-size: 9.2pt;
+       background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 5px; color: #334155; }
+
+  /* ---------- 提示框 ---------- */
+  .callout { border-radius: 8px; padding: 10px 14px; margin: 12px 0; break-inside: avoid; font-size: 9.9pt; }
+  .callout .ct { display: block; margin-bottom: 3px; }
+  .note { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .tip  { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+  .warn { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+
+  ul, ol { margin: 6px 0 6px; padding-left: 22px; }
+  li { margin: 3px 0; }
+
+  /* ---------- 类结构图 ---------- */
+  .hier { margin: 12px 0 14px; break-inside: avoid; }
+  .hbox { border: 1px solid #dbe3ee; border-radius: 9px; background: #fff;
+          padding: 8px 10px; text-align: center; }
+  .hbox b { display: block; color: #0f172a; font-size: 10.5pt; }
+  .hbox small { color: #64748b; font-size: 9pt; }
+  .hbox.top { background: #eff6ff; border-color: #bfdbfe; width: 62%; margin: 0 auto; }
+  .hconn { width: 0; height: 12px; border-left: 2px dashed #c7d2e3; margin: 0 auto; }
+  .hrow { display: flex; gap: 16px; }
+  .hrow .hbox { flex: 1; }
+
+  /* ---------- 页脚 ---------- */
+  .foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid #e2e8f0;
+          font-size: 8.8pt; color: #94a3b8; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">PYTHON 面向对象 · 第 2 讲</div>
+  <h1>继承 与 封装</h1>
+  <p class="sub">用「电机」的例子讲清楚两个核心特性，并落到机械臂项目的类设计上</p>
+  <div class="rule"></div>
+
+  <p class="lead">继承（Inheritance）和封装（Encapsulation）是面向对象编程的两个重要特性：<b>继承解决"代码复用"</b>，<b>封装解决"数据访问"</b>。</p>
+
+  <!-- ================= 1 ================= -->
+  <h2>1　继承（Inheritance）</h2>
+  <p>继承就是一个类可以继承另一个类的属性和方法，从而减少重复代码。先定义一个父类 <code>Motor</code>，再定义两个不同的电机子类：</p>
+
+<pre><code># 父类
+class Motor:
+    def __init__(self, motor_id):
+        self.motor_id = motor_id
+
+    def start(self):
+        print("电机启动")
+
+
+# 子类
+class ServoMotor(Motor):
+    def rotate(self):
+        print("舵机旋转")
+
+
+class StepMotor(Motor):
+    def step(self):
+        print("步进电机转动")</code></pre>
+
+  <p>使用：</p>
+<pre><code>servo = ServoMotor(1)
+servo.start()      # 继承父类的方法
+servo.rotate()     # 调用自己的方法
+print(servo.motor_id)</code></pre>
+
+  <p>输出：</p>
+<pre class="out"><code>电机启动
+舵机旋转
+1</code></pre>
+
+  <p>这里需要理解：</p>
+  <ul>
+    <li><code>Motor</code>：父类（基类）。</li>
+    <li><code>ServoMotor</code>、<code>StepMotor</code>：子类（派生类）。</li>
+    <li><code>class ServoMotor(Motor)</code>：表示 <code>ServoMotor</code> 继承 <code>Motor</code>。</li>
+    <li>子类可以直接使用父类的属性和方法（上例中 <code>start()</code> 和 <code>motor_id</code> 都来自父类）。</li>
+  </ul>
+
+  <h3>方法重写（Override）</h3>
+  <p>子类还可以重新定义父类的方法：</p>
+<pre><code>class Motor:
+    def start(self):
+        print("普通电机启动")
+
+
+class ServoMotor(Motor):
+    def start(self):
+        print("舵机启动")</code></pre>
+
+  <p>调用：</p>
+<pre><code>servo = ServoMotor()
+servo.start()</code></pre>
+
+  <p>输出：</p>
+<pre class="out"><code>舵机启动</code></pre>
+
+  <p>如果想在子类中调用父类的方法，可以使用 <code>super()</code>：</p>
+<pre><code>class ServoMotor(Motor):
+    def start(self):
+        super().start()          # 先执行父类的 start()
+        print("舵机进入工作状态")</code></pre>
+
+  <div class="callout note">
+    <b class="ct">为什么用 super() 而不是 Motor.start(self)</b>
+    写 <code>super().start()</code> 时，父类改了名字或换了层级，子类不需要跟着改；多继承时它也会按 MRO 正确找到下一个类。
+  </div>
+
+  <!-- ================= 2 ================= -->
+  <h2>2　封装（Encapsulation）</h2>
+  <p>封装就是将数据和操作数据的方法放在一个类中，同时限制外部直接访问某些内部数据。Python 中常见三种属性命名方式：</p>
+
+  <table>
+    <tr><th style="width:26%">写法</th><th>含义</th></tr>
+    <tr><td><code>name</code></td><td>公有属性，可以直接访问</td></tr>
+    <tr><td><code>_name</code></td><td>受保护约定，建议只在内部使用（外部仍能访问，只是"别这么干"）</td></tr>
+    <tr><td><code>__name</code></td><td>名称改写（name mangling），限制直接访问</td></tr>
+  </table>
+
+  <p>例如：</p>
+<pre><code>class Motor:
+    def __init__(self):
+        self.name = "DM-J4310"        # 公有
+        self._speed = 100             # 受保护
+        self.__temperature = 30       # 私有（名称改写）
+
+    def get_temperature(self):
+        return self.__temperature</code></pre>
+
+  <p>使用：</p>
+<pre><code>motor = Motor()
+print(motor.name)                # 正常
+print(motor._speed)              # 可以访问，但约定上不建议
+print(motor.get_temperature())   # 通过方法获取温度</code></pre>
+
+  <p><code>__temperature</code> 不适合直接通过 <code>motor.__temperature</code> 访问。</p>
+
+  <div class="callout warn">
+    <b class="ct">名称改写的真相</b>
+    双下划线并不是"真正禁止访问"，Python 会把它改写成 <code>_Motor__temperature</code>，所以 <code>motor._Motor__temperature</code> 依然读得到。它的作用是<b>挡住误用</b>，而不是安全防护。
+  </div>
+
+  <p>这里的设计思想是：<b>外部不直接操作内部数据，而是通过类提供的方法来访问和修改数据</b>。这样以后想在赋值时加校验（比如转速必须为正），只改方法，不用改所有调用处。</p>
+
+  <!-- ================= 3 ================= -->
+  <h2>3　两者有什么区别？</h2>
+
+  <table>
+    <tr><th style="width:16%">特性</th><th>继承</th><th>封装</th></tr>
+    <tr><td>核心目的</td><td>代码复用</td><td>隐藏内部实现、管理数据访问</td></tr>
+    <tr><td>主要方式</td><td>父类与子类</td><td>属性与方法</td></tr>
+    <tr><td>关键语法</td><td><code>class A(B)</code></td><td><code>self.__xxx</code></td></tr>
+    <tr><td>典型应用</td><td>不同类型电机共用基础功能</td><td>限制电机参数的访问和修改</td></tr>
+  </table>
+
+  <!-- ================= 4 ================= -->
+  <h2>4　结合机械臂项目理解</h2>
+  <p>可以设计这样的类结构：</p>
+
+  <div class="hier">
+    <div class="hbox top">Motor<small>电机基类 · 启动 / 停止 / 设置速度</small></div>
+    <div class="hconn"></div>
+    <div class="hrow">
+      <div class="hbox"><b>ServoMotor</b><small>舵机控制</small></div>
+      <div class="hbox"><b>JointMotor</b><small>关节电机控制</small></div>
+    </div>
+  </div>
+
+  <p>通过继承复用基础功能，子类实现各自的控制逻辑：<code>Motor</code> 里放 <code>start()</code>、<code>stop()</code>、<code>set_speed()</code> 和封装好的状态字段；<code>ServoMotor</code>、<code>JointMotor</code> 只写自己特有的部分（如角度回零、限位检查）。</p>
+
+  <div class="callout tip">
+    <b class="ct">记忆</b>
+    <ul style="margin:4px 0 0">
+      <li><b>继承</b>：子类继承父类的属性和方法（<code>class 子类(父类)</code>）。</li>
+      <li><b>封装</b>：将数据和操作数据的方法组织在一起，并控制访问方式（<code>self.__xxx</code>）。</li>
+    </ul>
+  </div>
+
+  <p>这两个概念掌握后，可以继续学习 Python 面向对象的第三个重要特性：<b>多态（Polymorphism）</b>。</p>
+
+  <div class="foot">
+    <span>Python 面向对象 · 继承与封装</span>
+    <span>示例代码可直接运行（Python 3.x）</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var KW = /\b(class|def|self|return|print|super|None|True|False|if|else|import|from|pass|raise)\b/g;
+  var els = document.querySelectorAll('pre code');
+  for (var i = 0; i < els.length; i++) {
+    var s = els[i].textContent
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    s = s.replace(/(#[^\n]*)/g, '\u0001$1\u0002');            // 注释
+    s = s.replace(/"([^"\n]*)"/g, '\u0003"$1"\u0004');        // 字符串
+    s = s.replace(KW, '\u0005$1\u0006');                      // 关键字
+    s = s.replace(/\u0001([\s\S]*?)\u0002/g, '<span class="c">$1</span>');
+    s = s.replace(/\u0003([\s\S]*?)\u0004/g, '<span class="s">$1</span>');
+    s = s.replace(/\u0005([\s\S]*?)\u0006/g, '<span class="k">$1</span>');
+    els[i].innerHTML = s;
+  }
+})();
+</script>
+</body>
+</html>

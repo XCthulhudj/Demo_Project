@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Python 文件操作 · 异常处理</title>
+<style>
+  @page { size: A4; margin: 15mm 14mm 15mm 14mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 10.3pt; line-height: 1.76; color: #1f2937; margin: 0; background: #fff;
+  }
+  .wrap { width: 182mm; margin: 0 auto; }
+
+  .kicker { font-size: 9pt; letter-spacing: .18em; color: #2563eb; font-weight: 700; }
+  h1 { font-size: 22pt; line-height: 1.3; margin: 4px 0 6px; color: #0f172a; }
+  .sub { font-size: 10.5pt; color: #64748b; margin: 0 0 14px; }
+  .rule { height: 3px; background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 45%, #e2e8f0 45%, #e2e8f0 100%); margin-bottom: 16px; }
+
+  h2 { font-size: 14.5pt; color: #0f172a; margin: 20px 0 10px; padding-left: 10px;
+       border-left: 4px solid #2563eb; break-after: avoid; }
+  h3 { font-size: 11.4pt; color: #0f172a; margin: 15px 0 6px; break-after: avoid; }
+  h3::before { content: "▸ "; color: #2563eb; }
+
+  p { margin: 6px 0; }
+  .lead { color: #334155; }
+
+  pre { margin: 9px 0 11px; padding: 12px 16px; border-radius: 8px;
+        background: #0f172a; overflow: hidden; break-inside: avoid;
+        font-size: 9.1pt; line-height: 1.55; }
+  pre code { font-family: Consolas, "Cascadia Mono", "Courier New", monospace; color: #e6edf3; }
+  .k { color: #c792ea; }
+  .b { color: #56b6c2; }
+  .s { color: #a5e075; }
+  .c { color: #7c8b9e; }
+  pre.out { background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; }
+  pre.out code { color: #334155; }
+  .cap { font-size: 8.8pt; color: #94a3b8; margin: -5px 0 12px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 9px 0 13px; font-size: 9.5pt; break-inside: avoid; }
+  th, td { border: 1px solid #e2e8f0; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eff6ff; color: #1e3a8a; font-weight: 700; }
+  td code, p code, li code { font-family: Consolas, monospace; font-size: 9.2pt;
+       background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 5px; color: #334155; }
+
+  .callout { border-radius: 8px; padding: 9px 14px; margin: 11px 0; break-inside: avoid; font-size: 9.9pt; }
+  .callout .ct { display: block; margin-bottom: 2px; }
+  .note { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .tip  { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+  .warn { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+
+  ul, ol { margin: 6px 0; padding-left: 22px; }
+  li { margin: 2px 0; }
+
+  .toc { display: flex; gap: 12px; margin: 14px 0 4px; break-inside: avoid; }
+  .toc > div { flex: 1; border: 1px solid #e2e8f0; border-radius: 9px; padding: 9px 12px; background: #f8fafc; }
+  .toc .n { color: #2563eb; font-weight: 700; }
+  .toc b { display: block; color: #0f172a; font-size: 10.5pt; margin: 2px 0; }
+  .toc small { color: #64748b; font-size: 9pt; }
+
+  .foot { margin-top: 16px; padding-top: 8px; border-top: 1px solid #e2e8f0;
+          font-size: 8.8pt; color: #94a3b8; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">PYTHON 基础 · 第 3 讲</div>
+  <h1>文件操作 与 异常处理</h1>
+  <p class="sub">读写文件、JSON 配置、错误捕获 —— 上位机开发里最常打交道的两块基础</p>
+  <div class="rule"></div>
+
+  <p class="lead">这两块建议分开学：<b>文件操作</b>解决"数据从哪来、存到哪去"，<b>异常处理</b>解决"出错时程序别直接崩"。前者练熟 API，后者练熟结构。</p>
+
+  <div class="toc">
+    <div><span class="n">一</span><b>文件操作</b><small>open / read / write / with / 路径 / JSON</small></div>
+    <div><span class="n">二</span><b>异常处理</b><small>try / except / 常见异常 / else-finally / raise</small></div>
+    <div><span class="n">三</span><b>掌握程度</b><small>优先级表 + 学习顺序</small></div>
+  </div>
+
+  <!-- ================= 一 ================= -->
+  <h2 id="sec1">一、文件操作</h2>
+  <p>主要内容：如何通过 Python 读取、创建、修改和保存文件。</p>
+
+  <h3>1. 打开文件</h3>
+  <p>使用 <code>open()</code>：</p>
+<pre><code>file = open("test.txt", "r", encoding="utf-8")</code></pre>
+
+  <p class="cap">常见打开模式：</p>
+  <table>
+    <tr><th style="width:16%">模式</th><th>含义</th></tr>
+    <tr><td><code>r</code></td><td>只读，文件不存在会报错</td></tr>
+    <tr><td><code>w</code></td><td>只写，文件不存在则创建，存在则清空</td></tr>
+    <tr><td><code>a</code></td><td>追加写入，文件不存在则创建</td></tr>
+    <tr><td><code>x</code></td><td>创建新文件，文件已存在则报错</td></tr>
+    <tr><td><code>b</code></td><td>二进制模式</td></tr>
+    <tr><td><code>+</code></td><td>同时支持读取和写入</td></tr>
+  </table>
+  <p>例如 <code>rb</code> 表示以二进制模式读取文件；<code>w+</code>、<code>a+</code> 也常出现在日志与缓存代码里。</p>
+
+  <h3>2. 读取文件</h3>
+<pre><code>file = open("test.txt", "r", encoding="utf-8")
+data = file.read()
+print(data)
+file.close()</code></pre>
+
+  <p>常用读取方法：</p>
+<pre><code>file.read()        # 读取全部内容，返回一个字符串
+file.readline()    # 读取一行
+file.readlines()   # 读取所有行，返回列表</code></pre>
+  <p class="cap">注意：上例用的是 <code>file</code> 这个变量名；写成 <code>open(...)</code> 直接调用也一样，但没法再操作同一个文件对象。</p>
+
+  <h3>3. 写入文件</h3>
+<pre><code>file = open("test.txt", "w", encoding="utf-8")
+file.write("Hello Python\n")
+file.write("Hello World")
+file.close()</code></pre>
+
+  <ul>
+    <li><code>write()</code>：写入字符串（写数字要先 <code>str()</code>）。</li>
+    <li><code>w</code>：会覆盖原有文件内容。</li>
+    <li><code>a</code>：在文件末尾追加内容。</li>
+  </ul>
+
+  <div class="callout warn">
+    <b class="ct">别拿 w 写日志</b>
+    <code>w</code> 打开的一瞬间原文件就已经被清空了 —— 哪怕你一行都没写。循环里反复用 <code>w</code> 打开同一个文件，最终只会剩下最后一次的内容，追加请用 <code>a</code>。
+  </div>
+
+  <h3>4. 使用 with 管理文件（重点）</h3>
+  <p>这是非常重要的知识点，建议重点掌握。</p>
+<pre><code>with open("test.txt", "r", encoding="utf-8") as file:
+    data = file.read()
+    print(data)</code></pre>
+
+  <p>使用 <code>with</code> 后，代码块执行结束会自动关闭文件，不需要手动调用 <code>close()</code>。</p>
+
+  <div class="callout tip">
+    <b class="ct">为什么一定要用 with</b>
+    手动 <code>close()</code> 的写法，一旦中途抛异常（比如解码失败），<code>close()</code> 就被跳过了，文件句柄会泄漏、Windows 上还会锁住文件删不掉。
+    <code>with</code> 保证任何情况下都会关文件，等价于 <code>try ... finally: file.close()</code>。
+  </div>
+
+  <h3>5. 文件路径</h3>
+  <p>需要了解相对路径和绝对路径：</p>
+<pre><code># 相对路径：相对于"运行脚本时的当前目录"
+open("data/test.txt", "r")
+
+# 绝对路径：从盘符开始，注意 Windows 的反斜杠要用 r"" 转义
+open(r"D:\Data\test.txt", "r")</code></pre>
+
+  <p>还可以学习 <code>pathlib</code> 模块，用对象的方式拼路径、判断文件是否存在：</p>
+<pre><code>from pathlib import Path
+
+p = Path("data") / "test.txt"      # 用 / 拼接，跨平台不用管分隔符
+print(p.exists())                  # 文件是否存在
+
+p.parent.mkdir(parents=True, exist_ok=True)   # 目录不存在就建
+p.write_text("hello", encoding="utf-8")       # 直接读写文本，内部已经 with</code></pre>
+
+  <h3>6. 进阶：JSON 文件操作</h3>
+  <p>JSON 常用于保存配置参数、设备信息和通信数据。推荐格式：<code>ensure_ascii=False</code> 让中文正常显示，<code>indent=4</code> 让文件可读。</p>
+<pre><code>import json
+
+data = {
+    "name": "Robot",
+    "speed": 100
+}
+
+# 写入 JSON
+with open("config.json", "w", encoding="utf-8") as file:
+    json.dump(data, file, ensure_ascii=False, indent=4)
+
+# 读取 JSON
+with open("config.json", "r", encoding="utf-8") as file:
+    result = json.load(file)
+
+print(result["name"])</code></pre>
+
+  <!-- ================= 二 ================= -->
+  <h2 id="sec2">二、异常处理</h2>
+  <p>异常就是程序运行过程中出现的错误或异常情况。例如：</p>
+<pre><code>num = 10 / 0</code></pre>
+  <p>会产生 <code>ZeroDivisionError</code>，导致程序中断：</p>
+<pre class="out"><code>Traceback (most recent call last):
+  File "demo.py", line 1, in &lt;module&gt;
+    num = 10 / 0
+ZeroDivisionError: division by zero</code></pre>
+
+  <h3>1. try 和 except</h3>
+  <p>这是异常处理最基础的结构：</p>
+<pre><code>try:
+    num = 10 / 0
+except ZeroDivisionError:
+    print("不能除以零")</code></pre>
+
+  <p>执行逻辑：</p>
+  <ul>
+    <li><code>try</code>：尝试执行可能出错的代码。</li>
+    <li><code>except</code>：发生指定异常时执行对应代码；没发生就跳过。</li>
+  </ul>
+
+  <h3>2. 常见异常类型</h3>
+  <table>
+    <tr><th style="width:34%">异常</th><th>常见原因</th></tr>
+    <tr><td><code>NameError</code></td><td>使用未定义的变量</td></tr>
+    <tr><td><code>TypeError</code></td><td>数据类型使用错误</td></tr>
+    <tr><td><code>ValueError</code></td><td>值不符合要求</td></tr>
+    <tr><td><code>IndexError</code></td><td>列表索引越界</td></tr>
+    <tr><td><code>KeyError</code></td><td>字典键不存在</td></tr>
+    <tr><td><code>FileNotFoundError</code></td><td>文件不存在</td></tr>
+    <tr><td><code>ZeroDivisionError</code></td><td>除数为零</td></tr>
+    <tr><td><code>ImportError</code></td><td>导入模块失败</td></tr>
+  </table>
+  <p>这些常见异常建议认识并掌握 —— 看到报错信息的第一行，能立刻知道大概是什么问题。</p>
+
+  <h3>3. 多个 except</h3>
+  <p>不同类型的异常可以分别处理：</p>
+<pre><code>try:
+    num = int(input("请输入数字："))
+    result = 100 / num
+except ValueError:
+    print("输入的不是整数")
+except ZeroDivisionError:
+    print("不能输入零")</code></pre>
+
+  <h3>4. else 和 finally</h3>
+  <p>完整的异常处理结构：</p>
+<pre><code>try:
+    num = 10 / 2
+except ZeroDivisionError:
+    print("发生异常")
+else:
+    print("程序正常执行")
+finally:
+    print("无论是否发生异常，都会执行")</code></pre>
+
+  <ul>
+    <li><code>else</code>：没有发生异常时执行。</li>
+    <li><code>finally</code>：无论是否发生异常，通常都会执行，常用于资源清理（关文件、关串口、释放连接）。</li>
+  </ul>
+
+  <h3>5. raise 主动抛出异常</h3>
+  <p>可以自己判断条件，并主动抛出异常：</p>
+<pre><code>def set_speed(speed):
+    if speed &lt; 0:
+        raise ValueError("速度不能为负数")
+    print("设置速度成功")
+
+set_speed(-10)</code></pre>
+
+  <p><code>raise</code> 可以主动触发异常，避免非法参数进入后续程序 —— 在机械臂上位机里，速度、角度、限位这类参数建议都在入口处校验。</p>
+
+  <!-- ================= 三 ================= -->
+  <h2 id="sec3">三、建议掌握程度</h2>
+  <p>结合后续的 STM32、ESP32 和机械臂上位机开发，建议按下面的优先级学习：</p>
+
+  <table>
+    <tr><th style="width:56%">知识点</th><th>掌握程度</th></tr>
+    <tr><td><code>open()</code> 和文件打开模式</td><td>熟练</td></tr>
+    <tr><td><code>read()</code>、<code>write()</code></td><td>熟练</td></tr>
+    <tr><td><code>with</code> 上下文管理</td><td>熟练</td></tr>
+    <tr><td>相对路径和绝对路径</td><td>熟练</td></tr>
+    <tr><td>JSON 文件读写</td><td>熟练</td></tr>
+    <tr><td><code>try-except</code></td><td>熟练</td></tr>
+    <tr><td>常见异常类型</td><td>认识并掌握</td></tr>
+    <tr><td><code>else</code>、<code>finally</code></td><td>理解</td></tr>
+    <tr><td><code>raise</code></td><td>掌握基本用法</td></tr>
+    <tr><td>自定义异常类</td><td>了解即可</td></tr>
+    <tr><td><code>pathlib</code></td><td>掌握基本用法</td></tr>
+  </table>
+
+  <h3>建议学习顺序</h3>
+  <ol>
+    <li><b>基础文件读写</b>：<code>open</code>、<code>read</code>、<code>write</code>、<code>close</code>、<code>with</code></li>
+    <li><b>文件路径与 JSON</b>：<code>pathlib</code>、<code>json.dump</code>、<code>json.load</code></li>
+    <li><b>基础异常处理</b>：<code>try</code>、<code>except</code>、常见异常</li>
+    <li><b>异常处理进阶</b>：<code>else</code>、<code>finally</code>、<code>raise</code></li>
+  </ol>
+
+  <div class="callout tip">
+    <b class="ct">学完能达到什么程度</b>
+    具备用 Python 做<b>文件配置管理、数据保存、程序错误处理</b>的基础能力：能读一份 JSON 配置驱动设备参数，能把采集数据写进文件，能在参数非法或文件缺失时给出一句人话提示，而不是抛一堆红色 Traceback。
+  </div>
+
+  <div class="foot">
+    <span>Python 基础 · 文件操作与异常处理</span>
+    <span>示例代码可直接运行（Python 3.x）</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var KW  = /\b(class|def|self|return|print|super|None|True|False|if|elif|else|import|from|as|with|try|except|finally|raise|pass|in|not|and|or|for|while|break|continue)\b/g;
+  var BUI = /\b(open|read|readline|readlines|write|close|json|dump|load|input|int|float|str|len|list|dict|Path|exists|mkdir|write_text|read_text)\b/g;
+  var els = document.querySelectorAll('pre code');
+  for (var i = 0; i < els.length; i++) {
+    var s = els[i].textContent
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    s = s.replace(/(#[^\n]*)/g, '\u0001$1\u0002');            // 注释
+    s = s.replace(/"([^"\n]*)"/g, '\u0003"$1"\u0004');        // 字符串
+    s = s.replace(KW,  '\u0005$1\u0006');                     // 关键字
+    s = s.replace(BUI, '\u0007$1\u0008');                     // 内置名
+    s = s.replace(/\u0001([\s\S]*?)\u0002/g, '<span class="c">$1</span>');
+    s = s.replace(/\u0003([\s\S]*?)\u0004/g, '<span class="s">$1</span>');
+    s = s.replace(/\u0005([\s\S]*?)\u0006/g, '<span class="k">$1</span>');
+    s = s.replace(/\u0007([\s\S]*?)\u0008/g, '<span class="b">$1</span>');
+    els[i].innerHTML = s;
+  }
+})();
+</script>
+</body>
+</html>
