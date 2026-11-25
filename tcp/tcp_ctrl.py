@@ -10,10 +10,11 @@ import socket
 import time
 
 HOST, PORT = "192.168.1.132", 4241
+AXIS = 'y'
 INTERVAL = 1
-VEL, DIR = 500, 1
-START = f"JOG_x_{DIR}_v_{VEL}_s_1\r\n".encode()   # 启动：+X, 50 mm/s
-STOP = f"JOG_x_{DIR}_v_{VEL}_s_0\r\n".encode()    # 停止
+VEL, DIR = 100, 1
+START = f"JOG_{AXIS}_{DIR}_v_{VEL}_s_1\r\n".encode()   # 启动：+X, 50 mm/s
+STOP = f"JOG_{AXIS}_{DIR}_v_{VEL}_s_0\r\n".encode()    # 停止
 
 logging.basicConfig(
     level=logging.INFO,
