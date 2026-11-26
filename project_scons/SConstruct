@@ -1,3 +1,132 @@
+# env = Environment(CPPPATH=['./inc'])
+
+# program = env.Program('main', ['main.cpp', './src/my_math.cpp'])
+
+# env.Default(program)
+
+'''---'''
+
+# env = Environment()
+
+# env.Append(
+#     CPPPATH=['./inc'],
+#     CCFLAGS=['-g']
+# )
+
+# program = env.Program(
+#     'main',
+#     ['main.cpp',
+#     './src/my_math.cpp']
+# )
+
+# Default(program)
+
+'''---'''
+
+# env = Environment()
+
+# src_files = [
+#     'main.cpp',
+#     'src/my_math.cpp'
+# ]
+
+# inc_paths = [
+#     '#inc'
+# ]
+
+# defines = [
+#     'DEBUG'
+# ]
+
+# env.Append(
+#     CPPPATH=inc_paths,
+#     CPPDEFINES=defines,
+#     CXXFLAGS=['-std=c++17', '-Wall'],
+#     CCFLAGS=['-O2']
+# )
+
+# program = env.Program(
+#     'main',
+#     src_files
+# )
+
+# Default(program)
+
+'''---'''
+
+# VariantDir('build', '.', duplicate=0)
+
+# env = Environment()
+
+# src_files = [
+#     'build/main.cpp',
+#     'build/src/my_math.cpp'
+# ]
+
+# inc_paths = [
+#     '#inc'
+# ]
+
+# defines = [
+#     'DEBUG'
+# ]
+
+# env.Append(
+#     CPPPATH=inc_paths,
+#     CPPDEFINES=defines,
+#     CXXFLAGS=['-std=c++17', '-Wall'],
+#     CCFLAGS=['-O2']
+# )
+
+# program = env.Program(
+#     'main',
+#     src_files
+# )
+
+# Default(program)
+
+'''-SConstruct-'''
+'''
+Environment()    # 创建构建环境
+Append()         # 配置编译参数
+SConscript()     # 调用子构建脚本
+Import()         # 接收其他脚本传递的变量
+Return()         # 返回构建目标
+Default()        # 设置默认构建目标
+'''
+import os
+
+os.makedirs('build', exist_ok=True) # 创建构建目录
+os.makedirs('bin', exist_ok=True)
+SConsignFile('build/.sconsign') # 指定 SCons 状态数据库的位置
+
 env = Environment()
 
-env.Default('main.cpp')
+inc_paths = [
+    '#inc'
+]
+
+defines = [
+    'DEBUG'
+]
+
+env.Append(
+    CPPPATH=inc_paths,
+    CPPDEFINES=defines,
+    CXXFLAGS=['-std=c++17', '-Wall'], # C++ 编译器专用参数
+    CCFLAGS=['-O2'] # C 和 C++ 编译器共用的编译参数
+)
+
+program = env.SConscript(
+    'SConscript', # 指定要执行的子构建脚本
+    variant_dir='build', # 指定该子脚本对应的构建目录
+    duplicate=0, # 不复制源文件
+    exports='env' # 将主脚本中的 env 传递给子脚本
+)
+
+# print("CC is:", env['CC'])
+# print("CXX is:", env['CXX'])
+# installed_program = env.Install('bin', program) # Install(): 定义文件复制任务
+# env.Alias('install', installed_program) # Alias(): 给任务起一个命令名字
+
+Default(program)

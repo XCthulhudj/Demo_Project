@@ -1,0 +1,15 @@
+'''-SConscript-'''
+
+Import('env')
+
+src_files = [
+    'main.cpp',
+    'src/my_math.cpp'
+]
+
+program = env.Program(
+    '../bin/main',
+    src_files
+)
+
+Return('program')
