@@ -33,3 +33,7 @@ target_compile_options(main
     -Wall
     -O2
 )
+
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#     COMMAND arm-none-eabi-size $<TARGET_FILE:${PROJECT_NAME}>
+# )

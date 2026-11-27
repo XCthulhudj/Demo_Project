@@ -1,0 +1,305 @@
+
+<mujoco model="CO2_Laser_XY_Gantry">
+
+    <compiler angle="radian" autolimits="true"/>
+
+    <option timestep="0.002"
+            gravity="0 0 -9.81"
+            integrator="implicitfast"/>
+
+    <visual>
+        <headlight diffuse="0.8 0.8 0.8"
+                   ambient="0.3 0.3 0.3"/>
+        <global azimuth="0" elevation="-25"/>
+    </visual>
+
+    <default>
+        <joint damping="5" armature="0.01"/>
+        <geom contype="0" conaffinity="0"/>
+    </default>
+
+    <worldbody>
+        <light pos="0 0 1.5"
+               dir="0 0 -1"
+               directional="true"/>
+
+        <!-- <geom name="ground"
+              type="plane"
+              size="0 0 1"
+              rgba="0.25 0.25 0.25 1"/> -->
+
+        <!-- ========================= -->
+        <!-- 固定机架 -->
+        <!-- ========================= -->
+
+        <body name="frame">
+
+            <!-- 工作台 -->
+            <geom name="table"
+                  type="box"
+                  pos="0.20 0.40 -0.015"
+                  size="0.20 0.40 0.015"
+                  rgba="0.35 0.35 0.38 1"/>
+
+            <!-- Y轴左右导轨 -->
+            <geom name="y_rail_r0"
+                  type="box"
+                  pos="0.25 -0.0325 0.025"
+                  size="0.35 0.0075 0.03"
+                  rgba="0.65 0.65 0.68 1"/>
+
+            <geom name="y_rail_r1"
+                  type="box"
+                  pos="0.25 -0.0325 0.06"
+                  size="0.35 0.0075 0.005"
+                  rgba="0.5 0.5 0.5 1"/>
+
+            <geom name="y_rail_l0"
+                  type="box"
+                  pos="0.25 0.8325 0.025"
+                  size="0.35 0.0075 0.03"
+                  rgba="0.65 0.65 0.68 1"/>
+
+            <geom name="y_rail_l1"
+                  type="box"
+                  pos="0.25 0.8325 0.06"
+                  size="0.35 0.0075 0.005"
+                  rgba="0.5 0.5 0.5 1"/>
+
+            <geom name = "y_roller_r0"
+                type = "cylinder"
+                pos = "-0.0925 -0.0525 -0.0225"
+                size = "0.0075 0.015"
+                euler = "1.5708 0 0"
+                rgba = "0.8 0.8 0.8 1"/>
+
+            <geom name = "y_roller_r1"
+                type = "cylinder"
+                pos = "0.5925 -0.0525 -0.0225"
+                size = "0.0075 0.015"
+                euler = "1.5708 0 0"
+                rgba = "0.8 0.8 0.8 1"/>
+
+            <geom name = "y_roller_l0"
+                type = "cylinder"
+                pos = "-0.0925 0.8525 -0.0225"
+                size = "0.0075 0.015"
+                euler = "1.5708 0 0"
+                rgba = "0.8 0.8 0.8 1"/>
+
+            <geom name = "y_roller_l1"
+                type = "cylinder"
+                pos = "0.5925 0.8525 -0.0225"
+                size = "0.0075 0.015"
+                euler = "1.5708 0 0"
+                rgba = "0.8 0.8 0.8 1"/>
+
+            <geom name = "y_belt_r_t"
+                type = "box"
+                pos = "0.25 -0.0525 -0.014"
+                size = "0.35 0.0075 0.001"
+                rgba = "0.12 0.12 0.12 1"/>
+
+            <geom name = "y_belt_r_b"
+                type = "box"
+                pos = "0.25 -0.0525 -0.031"
+                size = "0.35 0.0075 0.001"
+                rgba = "0.12 0.12 0.12 1"/>
+
+            <geom name = "y_belt_l_t"
+                type = "box"
+                pos = "0.25 0.8525 -0.014"
+                size = "0.35 0.0075 0.001"
+                rgba = "0.12 0.12 0.12 1"/>
+
+            <geom name = "y_belt_l_b"
+                type = "box"
+                pos = "0.25 0.8525 -0.031"
+                size = "0.35 0.0075 0.001"
+                rgba = "0.12 0.12 0.12 1"/>
+
+            <!-- ========================= -->
+            <!-- Y轴唯一驱动电机 -->
+            <!-- ========================= -->
+
+            <body name="y_motor" pos="-0.0925 0.4 -0.0225" euler = "1.5708 0 0">
+
+                <geom name="y_motor_body"
+                      type="box"
+                      size="0.0285 0.0285 0.0375"
+                      rgba="0.1 0.1 0.1 1"/>
+
+                <geom name="Y_motor_shaft"
+                      type="cylinder"
+                      pos="0 0 0"
+                      size="0.006 0.4525"
+                      rgba="0.5 0.5 0.5 1"/>
+
+                <geom name="Y_motor_coupling_r"
+                      type="cylinder"
+                      pos="0 0 0.0415"
+                      size="0.015 0.018"
+                      rgba="0.2 0.2 0.2 1"/>
+
+                <geom name="Y_motor_coupling_l"
+                      type="cylinder"
+                      pos="0 0 -0.0415"
+                      size="0.015 0.013"
+                      rgba="0.2 0.2 0.2 1"/>
+
+            </body>
+
+            <!-- ========================= -->
+            <!-- Y轴移动横梁组件 -->
+            <!-- ========================= -->
+
+            <body name="y_carriage" pos="-0.02 0.4 0.065">
+
+                <joint name="y_slide"
+                       type="slide"
+                       axis="1 0 0"
+                       range="0 0.40"
+                       limited="true"
+                       damping="10"/>
+
+                <!-- ========================= -->
+                <!-- 横梁 -->
+                <!-- ========================= -->
+
+                <body name="beam" pos="0 0 0.025">
+
+                    <geom name="beam_body"
+                          type="box"
+                          size="0.01 0.4475 0.025"
+                          rgba="0.75 0.75 0.78 1"/>
+
+                    <geom name = "beam_slider_r"
+                        type = "box"
+                        pos = "0 -0.4325 -0.03"
+                        size = "0.01 0.015 0.005"
+                        rgba = "0.5 0.5 0.5 1"/>
+
+                    <geom name = "beam_slider_l"
+                        type = "box"
+                        pos = "0 0.4325 -0.03"
+                        size = "0.01 0.015 0.005"
+                        rgba = "0.5 0.5 0.5 1"/>
+
+                    <!-- X轴驱动电机 -->
+                    <body name="x_motor" pos="0 -0.476 -0.0575">
+
+                        <geom name="x_motor_body"
+                              type="box"
+                              size="0.0285 0.0285 0.0375"
+                              rgba="0.1 0.1 0.1 1"/>
+
+                        <geom name="x_motor_shaft"
+                              type="cylinder"
+                              pos="0 0 0.0675"
+                              size="0.006 0.03"
+                              rgba="0.5 0.5 0.5 1"/>
+
+                        <geom name="x_motor_roller"
+                              type="cylinder"
+                              pos="0 0 0.0525"
+                              size="0.0075 0.015"
+                              rgba="0.8 0.8 0.8 1"/>
+
+                    </body>
+
+                    X轴从动轮
+                    <body name="X_idler" pos="0.32 0 0">
+
+                        <geom name="X_idler_pulley"
+                              type="cylinder"
+                              size="0.014 0.008"
+                              euler="0 1.5708 0"
+                              rgba="0.2 0.2 0.2 1"/>
+
+                    </body>
+
+                    <!-- X轴同步带 -->
+                    <geom name="X_belt"
+                          type="box"
+                          pos="0 0 0.035"
+                          size="0.32 0.004 0.002"
+                          rgba="0.12 0.12 0.12 1"/>
+
+                    <!-- ========================= -->
+                    <!-- X轴滑块及激光头 -->
+                    <!-- ========================= -->
+
+                    <body name="X_carriage" pos="0 0 0.04">
+
+                        <joint name="x_slide"
+                               type="slide"
+                               axis="1 0 0"
+                               range="-0.25 0.25"
+                               limited="true"
+                               damping="10"/>
+
+                        <geom name="X_block"
+                              type="box"
+                              size="0.035 0.035 0.025"
+                              rgba="0.15 0.25 0.8 1"/>
+
+                        <!-- 激光头 -->
+                        <body name="laser_head" pos="0 0 -0.045">
+
+                            <geom name="laser_head_body"
+                                  type="cylinder"
+                                  size="0.025 0.035"
+                                  rgba="0.2 0.2 0.22 1"/>
+
+                            <!-- 喷嘴 -->
+                            <body name="laser_nozzle" pos="0 0 -0.055">
+
+                                <geom name="nozzle"
+                                      type="cylinder"
+                                      size="0.012 0.025"
+                                      rgba="0.8 0.65 0.15 1"/>
+
+                                <!-- 激光束 -->
+                                <geom name="laser_beam"
+                                      type="cylinder"
+                                      pos="0 0 -0.06"
+                                      size="0.002 0.035"
+                                      rgba="1 0 0 0.5"/>
+
+                            </body>
+
+                        </body>
+
+                    </body>
+
+                </body>
+
+            </body>
+
+        </body>
+
+    </worldbody>
+
+    <!-- ========================= -->
+    <!-- 位置控制执行器 -->
+    <!-- ========================= -->
+
+    <actuator>
+
+        <position name="Y_axis_position"
+                  joint="y_slide"
+                  kp="100"
+                  kv="50"
+                  ctrlrange="0 0.4"
+                  forcerange="-10 10"/>
+
+        <position name="X_axis_position"
+                  joint="x_slide"
+                  kp="100"
+                  kv="50"
+                  ctrlrange="0 0.4"
+                  forcerange="-10 10"/>
+
+    </actuator>
+
+</mujoco>
